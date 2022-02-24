@@ -1,0 +1,96 @@
+version: '3'
+volumes:
+  portainer_data:
+  grafana:
+  prometheus:
+services:
+  qrl_node:
+    build: 
+      context: dockerfiles
+      dockerfile: QRL_node.docker
+    container_name: qrl_node
+    restart: unless-stopped
+    volumes:
+      - ./qrlData:/root/.qrl
+    ports:
+      - 127.0.0.1:18090:18090            #grpc_proxy_port
+      - 127.0.0.1:18091:18091            #wallet_daemon_port
+      - 127.0.0.1:19000:19000            #p2p_local_port    
+      - 127.0.0.1:19009:19009            #public API 
+      - 127.0.0.1:19008:19008            #admin API 
+      - 127.0.0.1:19007:19007            #mining API  
+      - 127.0.0.1:19010:19010            #wallet api
+    command:
+      start_qrl
+
+    
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./portainer-data:/data
+    ports:
+      - 9000:9000
+
+  qrl_stats:
+    container_name: qrl_stats
+    build:
+      context: dockerfiles
+      dockerfile: QRL_stats.docker
+    restart: unless-stopped
+    volumes:
+      - ./qrl_stats:/opt/qrl_stats
+    environment:
+      DAEMON_HOST: qrl_node
+      DAEMON_PORT: 19009
+      PORT: 8080
+    ports:
+      - 127.0.0.1:8080:8080
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.console.libraries=/usr/share/prometheus/console_libraries
+      - --web.console.templates=/usr/share/prometheus/consoles
+      - --web.enable-admin-api
+      - --storage.tsdb.retention.time=360d
+    volumes:
+      - prometheus:/prometheus
+      - ./files/prometheus:/etc/prometheus
+    ports:
+      - 127.0.0.1:9090:9090
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:3000:3000
+    environment:
+      HOSTNAME: grafana
+      GF_SERVER_ROOT_URL: "${GRAFANA_URL}"
+      GF_SERVER_SERVE_FROM_SUB_PATH: "${GF_SERVER_SERVE_FROM_SUB_PATH:-false}"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_USERS_ALLOW_ORG_CREATE: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "${GF_AUTH_ANONYMOUS_ENABLED:-true}"
+      GF_AUTH_BASIC_ENABLED: "${GF_AUTH_BASIC_ENABLED:-false}"
+      GF_AUTH_DISABLE_LOGIN_FORM: "${GF_AUTH_DISABLE_LOGIN_FORM:-true}"
+      GF_SECURITY_ADMIN_PASSWORD: "${GF_SECURITY_ADMIN_PASSWORD}"
+      GF_SECURITY_ADMIN_USER: "${GF_SECURITY_ADMIN_USER}"
+      GF_INSTALL_PLUGINS: "${GF_INSTALL_PLUGINS}"
+    volumes:
+      - ./files/grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/default.yaml:ro
+      - ./files/grafana/prometheus.yaml:/etc/grafana/provisioning/datasources/prometheus.yaml:ro
+      - ./files/grafana/daemon_metrics.json:/var/lib/grafana/dashboards/daemon_metrics.json:ro
+      - grafana:/var/lib/grafana

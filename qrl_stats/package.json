@@ -1,0 +1,40 @@
+{
+  "name": "qrl_stats",
+  "version": "0.2.0",
+  "description": "QRL Prometheus exporter",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "test": "eslint . && jest"
+  },
+  "keywords": [
+    "qrl",
+    "prometheus"
+  ],
+  "author": "Excitable Aardvark <excitableaardvark@tutanota.de>, 0XFF (https://github.com/0xFF0)",
+  "license": "BSDv3",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/0xFF0/QRL_docker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/0xFF0/QRL_docker/issues"
+  },
+  "homepage": "https://github.com/0xFF0/QRL_docker",
+  "dependencies": {
+    "express": ">4.16.2",
+    "@theqrl/node-helpers": "^0.6.1",
+    "prom-client": "^10.2.2"
+  },
+  "devDependencies": {
+    "eslint": ">4.17.0",
+    "eslint-config-standard": ">11.0.0-beta.0",
+    "eslint-plugin-import": ">2.8.0",
+    "eslint-plugin-node": ">6.0.0",
+    "eslint-plugin-promise": ">3.6.0",
+    "eslint-plugin-standard": ">3.0.1",
+    "jest": ">22.2.1",
+    "rewire": ">3.0.2",
+    "supertest": ">3.0.0"
+  }
+}

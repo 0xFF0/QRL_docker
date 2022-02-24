@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 30s
+  evaluation_interval: 60s
+
+  external_labels:
+    monitor: qrl-stats
+
+scrape_configs:
+  - job_name: "qrl-stats"
+    static_configs:
+      - targets: ["qrl_stats:8080"]
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      # - alertmanager:9093

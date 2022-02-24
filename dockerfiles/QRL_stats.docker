@@ -1,0 +1,9 @@
+FROM node:latest
+
+ADD NpmInstall.sh .
+
+EXPOSE 8080
+
+RUN ["chmod", "+x", "NpmInstall.sh"]
+CMD ./NpmInstall.sh
+
