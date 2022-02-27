@@ -35,11 +35,11 @@ This project leverages [Portainer](https://www.portainer.io/), [Prometheus](http
 
 3) Run the script (requirements are installed automatically).
 
-	    $ sudo Install_qrl_node_docker.sh
+	    $ sudo ./Install_qrl_node_docker.sh
 
 	Optional: Use this command to setup a node using a [QRL bootstrap](https://qrl.co.in/).
 	
-		$ sudo Install_qrl_node_docker.sh --bootstrap 
+		$ sudo ./Install_qrl_node_docker.sh --bootstrap 
 
 
 
