@@ -35,7 +35,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./portainer-data:/data
     ports:
-      - 9000:9000
+      - 127.0.0.1:9000:9000
 
   qrl_stats:
     container_name: qrl_stats
@@ -74,7 +74,7 @@ services:
     container_name: grafana
     restart: unless-stopped
     ports:
-      - 127.0.0.1:3000:3000
+      - 3000:3000
     environment:
       HOSTNAME: grafana
       GF_SERVER_ROOT_URL: "${GRAFANA_URL}"
